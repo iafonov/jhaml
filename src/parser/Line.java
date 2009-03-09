@@ -6,7 +6,7 @@ public class Line {
 
     public Line(String line) {
 	_level = parseLevel(line);
-	_line = line;
+	_line = line.trim();
     }
 
     private int parseLevel(String line) {
@@ -26,27 +26,51 @@ public class Line {
     public String getLine() {
 	return _line;
     }
-    
+
     public String stripTag() {
-	int indexOf = _line.trim().indexOf(' ');
-	
+	int indexOf = _line.indexOf(' ');
+
+	if (_line.length() == 0) {
+	    return "";
+	}
+
 	if (indexOf == -1) {
-	    return _line.trim().substring(1);
+	    return _line.substring(1);
 	} else {
-	    return _line.trim().substring(1, _line.trim().indexOf(' '));
+	    return _line.substring(1, _line.indexOf(' '));
 	}
     }
-    
+
     public String stripContents() {
-	return _line.trim().substring(_line.trim().indexOf(' ') + 1, _line.trim().length());
+	if (_line.indexOf(' ') != -1) {
+	    return _line.substring(_line.indexOf(' ') + 1, _line.length());
+	} else {
+	    return "";
+	}
     }
 
     public String stripCommand() {
-	return "";
+	if (_line.length() == 0) {
+	    return "";
+	} else {
+	    return _line.substring(0, 1);
+	}
     }
-    
+
     @Override
     public String toString() {
 	return _level + ":" + _line;
-    }    
+    }
+
+    public String process(String data) {
+	return openTag() + data + closeTag();
+    }
+
+    private String openTag() {
+	return "<" + stripTag() + ">";
+    }
+
+    private String closeTag() {
+	return "</" + stripTag() + ">";
+    }
 }
